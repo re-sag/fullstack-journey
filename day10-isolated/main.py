@@ -1,0 +1,173 @@
+import hashlib
+import hmac
+import secrets
+import time
+import base64
+import json
+from datetime import datetime, timedelta
+from typing import Optional
+
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import sqlite3
+
+# --------------------------
+# 🔐 PURE PYTHON SECURITY — NO EXTRA PACKAGES
+# --------------------------
+# Password hashing (PBKDF2‑HMAC‑SHA256)
+def hash_password(password: str) -> str:
+    salt = secrets.token_hex(16)
+    pw_hash = hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        salt.encode("utf-8"),
+        100000
+    )
+    return f"{salt}:{pw_hash.hex()}"
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    salt, stored_hash = hashed_password.split(":")
+    computed = hashlib.pbkdf2_hmac(
+        "sha256",
+        plain_password.encode("utf-8"),
+        salt.encode("utf-8"),
+        100000
+    )
+    return hmac.compare_digest(computed.hex(), stored_hash)
+
+# JWT create & verify — pure HMAC‑SHA256
+SECRET_KEY = "your-strong-secret-key-change-this-in-production"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
+
+def b64_encode(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("utf-8")
+
+def b64_decode(data: str) -> bytes:
+    data += "=" * ((4 - len(data) % 4) % 4)
+    return base64.urlsafe_b64decode(data)
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": int(expire.timestamp())})
+
+    header = json.dumps({"alg": ALGORITHM, "typ": "JWT"}).encode()
+    payload = json.dumps(to_encode).encode()
+    signing_input = f"{b64_encode(header)}.{b64_encode(payload)}".encode()
+    signature = hmac.new(SECRET_KEY.encode(), signing_input, hashlib.sha256).digest()
+    return f"{b64_encode(header)}.{b64_encode(payload)}.{b64_encode(signature)}"
+
+def verify_token(token: str):
+    try:
+        parts = token.split(".")
+        if len(parts) != 3:
+            raise ValueError
+        header_b64, payload_b64, signature_b64 = parts
+        signing_input = f"{header_b64}.{payload_b64}".encode()
+        expected_sig = hmac.new(SECRET_KEY.encode(), signing_input, hashlib.sha256).digest()
+        if not hmac.compare_digest(b64_decode(signature_b64), expected_sig):
+            raise ValueError
+        payload = json.loads(b64_decode(payload_b64))
+        if payload["exp"] < time.time():
+            raise ValueError
+        return payload
+    except Exception:
+        return None
+
+# --------------------------
+# 🚀 APP SETUP
+# --------------------------
+app = FastAPI(title="Secure Full Stack API — Pure Python")
+DB_FILE = "mydata.db"
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+# --------------------------
+# 🗄️ DATABASE
+# --------------------------
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        password TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# --------------------------
+# 📦 DATA MODELS
+# --------------------------
+class UserCreate(BaseModel):
+    email: str
+    name: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+# --------------------------
+# 🔗 API ENDPOINTS
+# --------------------------
+@app.post("/register", status_code=status.HTTP_201_CREATED)
+def register_user(user: UserCreate):
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    try:
+        hashed_pw = hash_password(user.password)
+        c.execute(
+            "INSERT INTO users (email, name, password) VALUES (?, ?, ?)",
+            (user.email, user.name, hashed_pw)
+        )
+        conn.commit()
+    except sqlite3.IntegrityError:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    finally:
+        conn.close()
+    return {"msg": "User created successfully"}
+
+@app.post("/login", response_model=Token)
+def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE email = ?", (form_data.username,))
+    user = c.fetchone()
+    conn.close()
+
+    if not user or not verify_password(form_data.password, user[3]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user[1]}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/")
+def root():
+    return {"message": "✅ FastAPI Backend Running — Day 10 Complete"}
+
