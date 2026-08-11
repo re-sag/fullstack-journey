@@ -2,13 +2,13 @@
 
 ## 💼 Services Offered — Junior Full-Stack Software Engineer
 
-✅ Build websites & web apps — design → live deployment
-✅ Frontend — HTML5 · CSS3 · Tailwind · JS · React · Next.js
-✅ Backend — Python · FastAPI · APIs · Database
-✅ Full-Stack — connect frontend ↔ backend ↔ data
-✅ Responsive — phones, tablets & computers
-✅ Fix & improve — update, repair, optimize
-✅ Deploy worldwide — public URL 🌍
+•✅ Build websites & web apps — design → live deployment
+•✅ Frontend — HTML5 · CSS3 · Tailwind · JS · React · Next.js
+•✅ Backend — Python · FastAPI · APIs · Database
+•✅ Full-Stack — connect frontend ↔ backend ↔ data
+•✅ Responsive — phones, tablets & computers
+•✅ Fix & improve — update, repair, optimize
+•✅ Deploy worldwide — public URL 🌍
 
 ---
 
