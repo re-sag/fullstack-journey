@@ -1,4 +1,37 @@
-# 🔗 Full Stack Developer
+# 👋 Hi, I'm Re.Sag
+
+## 💼 Services Offered — Junior Full-Stack Software Engineer
+
+✅ Build websites & web apps — design → live deployment
+✅ Frontend — HTML5 · CSS3 · Tailwind · JS · React · Next.js
+✅ Backend — Python · FastAPI · APIs · Database
+✅ Full-Stack — connect frontend ↔ backend ↔ data
+✅ Responsive — phones, tablets & computers
+✅ Fix & improve — update, repair, optimize
+✅ Deploy worldwide — public URL 🌍
+
+---
+
+## 🛠️ Technical Skills
+
+`HTML5` · `CSS3` · `Tailwind CSS` · `JavaScript` · `React` · `Next.js` · `Python` · `FastAPI` · `SQL` · `Git` · `GitHub`
+
+---
+
+## 🌍 Availability & Contact
+
+- 📍 Based in **Philippines** — available **remotely worldwide**
+- ⏰ Flexible across all time zones
+- 📩 **Reach me at:** re.sag.sepfdm@gmail.com
+
+---
+
+> *"Whatever you do, work at it with all your heart — as working for the Lord, not for human masters."*
+> — **Colossians 3:23** 🙏✨
+
+---
+
+## 🔗 Full Stack Developer
 
 Building complete, working applications — from what users see to what happens behind the scenes.
 
@@ -19,11 +52,11 @@ Building complete, working applications — from what users see to what happens 
 
 | Folder | What's Inside |
 |---|---|
-| **`backend/`** | Python + FastAPI + JWT Authentication + SQLite Database |
-| **`frontend/`** | HTML5 + CSS3 + JavaScript — responsive, interactive website |
-| **`kivy-app/`** | Bonus: Mobile app built with Python |
-| **`mobile-apps/`** | Additional mobile development experiments |
-| **`day10-isolated/`** | Practice API project — isolated learning |
+| **backend/** | Python + FastAPI + JWT Authentication + SQLite Database |
+| **frontend/** | HTML5 + CSS3 + JavaScript — responsive, interactive website |
+| **kivy-app/** | Bonus: Mobile app built with Python |
+| **mobile-apps/** | Additional mobile development experiments |
+| **day10-isolated/** | Practice API project — isolated learning |
 
 ---
 
@@ -52,7 +85,6 @@ Building complete, working applications — from what users see to what happens 
 ## 📌 My Project
 
 This repository shows a complete full-stack application:
-
 - ✅ User interface built with HTML, CSS & JavaScript
 - ✅ Secure login and authentication system
 - ✅ Data stored and managed with SQLite database
@@ -71,10 +103,14 @@ This repository shows a complete full-stack application:
 
 ---
 
-## 🙏 Purpose
+## 🎯 Purpose
 
 To create solutions that help people. To build things that work well. To grow, contribute, and serve.
 
 > *"Commit your work to the Lord, and your plans will be established."*
 > — **Proverbs 16:3** 🙏✨
+
+---
+
+🏷️ **Technologies:** #junior-developer #full-stack #html5 #css3 #tailwindcss #javascript #react #nextjs #python #fastapi #sql #rest-api #web-development #responsive-design #remote-ready
 
