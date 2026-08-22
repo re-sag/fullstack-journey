@@ -1,4 +1,4 @@
-# 👋 Hi, I'm Re.Sag
+# 👋 Hi, I'm Re Sag
 
 ## 💼 Services Offered — Junior Full-Stack Software Engineer
 
